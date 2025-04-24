@@ -11,12 +11,19 @@ type WalletEntry = {
   mnemonic: string;
 };
 
+type CheckboxState = {
+  [publicKey: string]: { done: boolean; ban: boolean };
+};
+
+const CHECKBOX_STORAGE_KEY = "wallet_checkbox_status";
 const STORAGE_KEY = "solana_wallet_excel_base64";
 localStorage.setItem("isUseAlert", "true");
 const WalletViewer: React.FC = () => {
   const [wallets, setWallets] = useState<WalletEntry[]>([]);
   const isUseAlert = localStorage.getItem("isUseAlert");
-  const [isAlert, setIsAlert] = useState(isUseAlert)
+  const [isAlert, setIsAlert] = useState(isUseAlert);
+
+  const [checkboxes, setCheckboxes] = useState<CheckboxState>({});
   // Load from localStorage on first render
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -27,6 +34,11 @@ const WalletViewer: React.FC = () => {
         bytes[i] = binary.charCodeAt(i);
       }
       parseExcelFile(bytes.buffer);
+    }
+
+    const checkboxData = localStorage.getItem(CHECKBOX_STORAGE_KEY);
+    if (checkboxData) {
+      setCheckboxes(JSON.parse(checkboxData));
     }
   }, []);
 
@@ -62,6 +74,18 @@ const WalletViewer: React.FC = () => {
     setWallets(parsed);
   };
 
+  const handleCheckboxChange = (publicKey: string, field: "done" | "ban", value: boolean) => {
+    const updated = {
+      ...checkboxes,
+      [publicKey]: {
+        ...checkboxes[publicKey],
+        [field]: value,
+      },
+    };
+    setCheckboxes(updated);
+    localStorage.setItem(CHECKBOX_STORAGE_KEY, JSON.stringify(updated));
+  };
+
   const handleCopy = async (text: string) => {
     try {
       // First, try Clipboard API (works on most desktop & modern mobile browsers)
@@ -76,13 +100,13 @@ const WalletViewer: React.FC = () => {
         document.body.appendChild(textarea);
         textarea.focus();
         textarea.select();
-  
+
         const success = document.execCommand("copy");
         if (!success) throw new Error("Fallback copy failed");
-  
+
         document.body.removeChild(textarea);
       }
-  
+
       if (isUseAlert === "true") alert("Copied to clipboard!");
     } catch (err) {
       if (isUseAlert === "true") alert("Failed to copy to clipboard 😢");
@@ -90,25 +114,25 @@ const WalletViewer: React.FC = () => {
     }
   };
   const handleChangeAlertMode = (mode: string) => {
-    if(isAlert !== mode){
+    if (isAlert !== mode) {
       localStorage.setItem("isUseAlert", mode);
       setIsAlert(mode);
     }
-  }
-  
+  };
+
   return (
     <div className="p-4">
       <h3 className="text-xl font-bold mb-4">📄 Solana Wallet Viewer</h3>
 
       <input type="file" accept=".xlsx" onChange={handleFileUpload} className="mb-4" />
-      <div 
+      <div
         onClick={() => {
           const value = isAlert === "true" ? "false" : "true";
-          handleChangeAlertMode(value)
+          handleChangeAlertMode(value);
         }}
-        style={{cursor: "pointer", fontSize: 20}}
+        style={{ cursor: "pointer", fontSize: 20 }}
       >
-        <span >Alert mode: </span>
+        <span>Alert mode: </span>
         <span>{isUseAlert}</span>
       </div>
       <div>
@@ -122,11 +146,31 @@ const WalletViewer: React.FC = () => {
             const bgColor = (index + 1) % 2 === 0 ? "rgb(158, 214, 247)" : "none";
             return (
               <div className={cx("table-row")} key={index} style={{ backgroundColor: bgColor }}>
-                <div style={{fontSize: 24}}>{wallet.no}</div>
+                <div style={{ fontSize: 24 }}>{wallet.no}</div>
                 <div>
                   <div>{ConvertToShortAddress(wallet.publicKey)}</div>
                   <div onClick={() => handleCopy(wallet.mnemonic)} style={{ cursor: "pointer" }}>
-                    <IoIosCopy size={35}/>
+                    <IoIosCopy size={35} />
+                  </div>
+                  <div>
+                    {/* <span>Done:<input type="checkbox"/></span>
+                    <span>Ban:<input type="checkbox"/></span> */}
+                    <span>
+                      Done:
+                      <input
+                        type="checkbox"
+                        checked={checkboxes[wallet.publicKey]?.done || false}
+                        onChange={(e) => handleCheckboxChange(wallet.publicKey, "done", e.target.checked)}
+                      />
+                    </span>
+                    <span>
+                      Ban:
+                      <input
+                        type="checkbox"
+                        checked={checkboxes[wallet.publicKey]?.ban || false}
+                        onChange={(e) => handleCheckboxChange(wallet.publicKey, "ban", e.target.checked)}
+                      />
+                    </span>
                   </div>
                 </div>
                 <div>{wallet.mnemonic}</div>
