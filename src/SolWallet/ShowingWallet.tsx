@@ -15,6 +15,11 @@ type CheckboxState = {
   [publicKey: string]: { done: boolean; ban: boolean };
 };
 
+type DateState = {
+  [publicKey: string]: string; // format: "YYYY-MM-DD"
+};
+
+const DATE_STORAGE_KEY = "wallet_mnemonic_dates";
 const CHECKBOX_STORAGE_KEY = "wallet_checkbox_status";
 const STORAGE_KEY = "solana_wallet_excel_base64";
 localStorage.setItem("isUseAlert", "true");
@@ -22,6 +27,7 @@ const WalletViewer: React.FC = () => {
   const [wallets, setWallets] = useState<WalletEntry[]>([]);
   const isUseAlert = localStorage.getItem("isUseAlert");
   const [isAlert, setIsAlert] = useState(isUseAlert);
+  const [dates, setDates] = useState<DateState>({});
 
   const [checkboxes, setCheckboxes] = useState<CheckboxState>({});
   // Load from localStorage on first render
@@ -39,6 +45,11 @@ const WalletViewer: React.FC = () => {
     const checkboxData = localStorage.getItem(CHECKBOX_STORAGE_KEY);
     if (checkboxData) {
       setCheckboxes(JSON.parse(checkboxData));
+    }
+
+    const dateData = localStorage.getItem(DATE_STORAGE_KEY);
+    if (dateData) {
+      setDates(JSON.parse(dateData));
     }
   }, []);
 
@@ -72,6 +83,15 @@ const WalletViewer: React.FC = () => {
     }));
 
     setWallets(parsed);
+  };
+
+  const handleDateChange = (publicKey: string, value: string) => {
+    const updated = {
+      ...dates,
+      [publicKey]: value,
+    };
+    setDates(updated);
+    localStorage.setItem(DATE_STORAGE_KEY, JSON.stringify(updated));
   };
 
   const handleCheckboxChange = (publicKey: string, field: "done" | "ban", value: boolean) => {
@@ -153,16 +173,6 @@ const WalletViewer: React.FC = () => {
                     <IoIosCopy size={35} />
                   </div>
                   <div>
-                    {/* <span>Done:<input type="checkbox"/></span>
-                    <span>Ban:<input type="checkbox"/></span> */}
-                    <span>
-                      Done:
-                      <input
-                        type="checkbox"
-                        checked={checkboxes[wallet.publicKey]?.done || false}
-                        onChange={(e) => handleCheckboxChange(wallet.publicKey, "done", e.target.checked)}
-                      />
-                    </span>
                     <span>
                       Ban:
                       <input
@@ -173,7 +183,20 @@ const WalletViewer: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                <div>{wallet.mnemonic}</div>
+                <div>
+                  <div>{wallet.mnemonic}</div>
+                  <div>
+                    <input style={{height: 28, fontSize: 17}} type="date" value={dates[wallet.publicKey] || ""} onChange={(e) => handleDateChange(wallet.publicKey, e.target.value)} />
+                  </div>
+                  <span>
+                    Roam:
+                    <input
+                      type="checkbox"
+                      checked={checkboxes[wallet.publicKey]?.done || false}
+                      onChange={(e) => handleCheckboxChange(wallet.publicKey, "done", e.target.checked)}
+                    />
+                  </span>
+                </div>
               </div>
             );
           })}
