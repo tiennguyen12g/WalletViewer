@@ -22,12 +22,14 @@ type DateState = {
 const DATE_STORAGE_KEY = "wallet_mnemonic_dates";
 const CHECKBOX_STORAGE_KEY = "wallet_checkbox_status";
 const STORAGE_KEY = "solana_wallet_excel_base64";
+const FILENAME_KEY = "file-name"
 localStorage.setItem("isUseAlert", "true");
 const WalletViewer: React.FC = () => {
   const [wallets, setWallets] = useState<WalletEntry[]>([]);
   const isUseAlert = localStorage.getItem("isUseAlert");
   const [isAlert, setIsAlert] = useState(isUseAlert);
   const [dates, setDates] = useState<DateState>({});
+  const [fileName, setFileName] = useState<string>("None");
 
   const [checkboxes, setCheckboxes] = useState<CheckboxState>({});
   // Load from localStorage on first render
@@ -51,6 +53,11 @@ const WalletViewer: React.FC = () => {
     if (dateData) {
       setDates(JSON.parse(dateData));
     }
+
+    const fileName = localStorage.getItem(FILENAME_KEY);
+    if(fileName){
+      setFileName(fileName)
+    }
   }, []);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,6 +76,10 @@ const WalletViewer: React.FC = () => {
       parseExcelFile(arrayBuffer);
     };
     reader.readAsArrayBuffer(file);
+
+    const fileName = file.name;
+    localStorage.setItem(FILENAME_KEY,fileName)
+    setFileName(fileName);
   };
 
   const parseExcelFile = (arrayBuffer: ArrayBuffer) => {
@@ -145,6 +156,7 @@ const WalletViewer: React.FC = () => {
       <h3 className="text-xl font-bold mb-4">📄 Solana Wallet Viewer</h3>
 
       <input type="file" accept=".xlsx" onChange={handleFileUpload} className="mb-4" />
+      <h4>File-name: {fileName}</h4>
       <div
         onClick={() => {
           const value = isAlert === "true" ? "false" : "true";

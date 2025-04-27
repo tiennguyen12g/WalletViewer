@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import WalletViewer from './ShowingWallet';
 import Withdrawal from './Withdrawal';
-import Test from './Test';
 export default function Home() {
      const [page,setPage] = useState("wallet-viewer");
      const handleSwitchPage = (pageName: string) => {
