@@ -1,9 +1,9 @@
 import './App.css';
-import WalletViewer from './SolWallet/ShowingWallet';
+import Home from './SolWallet/Home';
 function App() {
   return (
     <>
-      <WalletViewer />
+      <Home />
     </>
   )
 }
