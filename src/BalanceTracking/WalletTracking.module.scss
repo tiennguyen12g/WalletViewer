@@ -1,0 +1,58 @@
+.wallet-tracking{
+     span {
+          border: 0px solid white !important;
+     }
+     .table-header{
+          display: grid;
+          grid-template-columns: 40px 1fr 160px 160px;
+          text-align: center;
+          font-weight: bold;
+          font-size: 20;
+          
+          
+          div{
+               border-top: 1px solid gainsboro;
+               border-right: 1px solid gainsboro;
+               border-bottom: 1px solid gainsboro;
+               color: rgb(26, 146, 216);
+          }
+          :first-child{
+               border-left: 1px solid gainsboro;
+          }
+     }
+     .table-body{
+          .table-row{
+               display: grid;
+               grid-template-columns: 40px 1fr 160px 160px;
+               text-align: right;
+               font-size: 20;
+               font-weight: 500;
+               div{
+                    border-right: 1px solid gainsboro;
+                    border-bottom: 1px solid gainsboro;
+                    padding-right: 10px;
+               }
+               :first-child{
+                    border-left: 1px solid gainsboro;
+               }  
+          }
+     }
+     .table-footer{
+          display: grid;
+          grid-template-columns: 40px 1fr 160px 160px;
+          text-align: center;
+          font-weight: bold;
+          font-size: 20;
+          
+          
+          div{
+               border-top: 1px solid gainsboro;
+               border-right: 1px solid gainsboro;
+               border-bottom: 1px solid gainsboro;
+               color: rgb(26, 146, 216);
+          }
+          :first-child{
+               border-left: 1px solid gainsboro;
+          }
+     }
+}

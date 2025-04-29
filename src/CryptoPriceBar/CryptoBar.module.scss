@@ -1,0 +1,52 @@
+.wrap-crypto-bar{
+
+    .token-container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .token-price-box{
+            margin: 5px 20px;
+            .token-name-logo{
+                width: 100px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                span{
+    
+                    font-weight: 500;
+                    font-size: 20px;
+                    margin-left: 10px;
+                }
+            }
+            .token-price{
+                width: 110px;
+                font-size: 20px;
+                font-weight: 600;
+                text-align: center;
+            }
+        }
+    }
+    .line-decor{ 
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        .line-left{
+            width: 380px;
+            
+            border-top: 1px solid black;
+        }
+        .square{
+            width: 6px;
+            height: 6px;
+            margin: 0px 15px;
+            background-color: black;
+            transform: rotate(45deg);
+        }
+        .line-right{
+            width: 380px;
+            border-top: 1px solid black;
+        }
+    }
+}
