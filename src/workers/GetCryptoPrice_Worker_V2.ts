@@ -39,24 +39,6 @@ const fetchCryptoPrices = async (symbols: string[]) => {
   }
 };
 
-const fetchBinancePrice = async (symbol: string): Promise<CryptoPriceType> => {
-  try {
-    const response = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`);
-    const data = await response.json();
-    return {
-      symbol: data.symbol,
-      price: data.lastPrice,
-      percent: data.priceChangePercent,
-    };
-  } catch (error) {
-    console.error(`Error fetching ${symbol} price from Binance:`, error);
-    return {
-      symbol: symbol,
-      price: 0,
-      percent: "0",
-    };
-  }
-};
 
 export {};
 export type { CryptoPriceType}

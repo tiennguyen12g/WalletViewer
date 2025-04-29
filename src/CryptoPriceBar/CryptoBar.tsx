@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import {useState, useEffect} from 'react'
 import { arrayLogo, LogoInfos_Type} from './CryptoLogo/CryptoLogo';
 import classNames from 'classnames/bind'
 import styles from './CryptoBar.module.scss'
@@ -14,25 +14,25 @@ interface CryptoPrice {
 
   
 const cryptocurrencies = ['BTCUSDT', 'SOLUSDT','ROAMUSDT'];
-const testArray: CryptoPrice[] = [
-    {
-        symbol: "BTCUSDT",
-        price: 1000,
-    },
-    {
-        symbol: "ETHUSDT",
-        price: 1000,
-    },
-    {
-        symbol: "SOLUSDT",
-        price: 1000,
-    },
-    {
-        symbol: "TONUSDT",
-        price: 1000,
-    },
+// const testArray: CryptoPrice[] = [
+//     {
+//         symbol: "BTCUSDT",
+//         price: 1000,
+//     },
+//     {
+//         symbol: "ETHUSDT",
+//         price: 1000,
+//     },
+//     {
+//         symbol: "SOLUSDT",
+//         price: 1000,
+//     },
+//     {
+//         symbol: "TONUSDT",
+//         price: 1000,
+//     },
 
-]
+// ]
 export default function CryptoBar() {
     const logoSize = 25;
     const [prices, setPrices] = useState<CryptoPrice[]>([]);

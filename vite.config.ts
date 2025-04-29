@@ -1,17 +1,18 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
-import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill';
-// https://vite.dev/config/
+import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
+import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
+import rollupNodePolyfills from 'rollup-plugin-node-polyfills'
+import type { Plugin } from 'vite'
+
 export default defineConfig({
   plugins: [react()],
   base: '/WalletViewer/',
-  server:{
+  server: {
     host: true,
   },
   resolve: {
     alias: {
-      // Add aliases
       buffer: 'buffer',
       process: 'process/browser',
     },
@@ -19,7 +20,7 @@ export default defineConfig({
   optimizeDeps: {
     esbuildOptions: {
       define: {
-        global: 'globalThis', // important for Buffer
+        global: 'globalThis',
       },
       plugins: [
         NodeGlobalsPolyfillPlugin({
@@ -30,4 +31,11 @@ export default defineConfig({
       ],
     },
   },
-});
+  build: {
+    rollupOptions: {
+      plugins: [
+        rollupNodePolyfills() as unknown as Plugin,
+      ],
+    },
+  },
+})

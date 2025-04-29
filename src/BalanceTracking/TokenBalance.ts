@@ -1,13 +1,13 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 import { getAssociatedTokenAddress, getAccount } from "@solana/spl-token";
 
-type AccountToken = {
-  address: PublicKey; // <- The token account address (same as the input `ata`)
-  mint: PublicKey; // Token mint address (e.g., ROAM token)
-  owner: PublicKey; // Wallet address that owns this token account
-  amount: bigint; // Amount of tokens held in this token account
-  // ... other metadata
-};
+// type AccountToken = {
+//   address: PublicKey; // <- The token account address (same as the input `ata`)
+//   mint: PublicKey; // Token mint address (e.g., ROAM token)
+//   owner: PublicKey; // Wallet address that owns this token account
+//   amount: bigint; // Amount of tokens held in this token account
+//   // ... other metadata
+// };
 
 // Get ROAM token balance for a wallet
 const getRoamBalance = async (walletAddress: string): Promise<number | null> => {

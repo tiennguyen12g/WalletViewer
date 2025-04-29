@@ -1,8 +1,8 @@
 import btc_logo from "./bitcoin-btc-svg.svg";
-import eth_logo from "./ethereum-eth-logo.svg";
+// import eth_logo from "./ethereum-eth-logo.svg";
 import sol_logo from "./solana-sol-logo.svg";
-import ton_logo from "./toncoin-ton-logo.svg";
-import etherfi_logo from "./etherfi-logo.png";
+// import ton_logo from "./toncoin-ton-logo.svg";
+// import etherfi_logo from "./etherfi-logo.png";
 import roam_logo from "./roam.jpg";
 // export {
 //     btc_logo,

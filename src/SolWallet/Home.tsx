@@ -3,7 +3,7 @@ import WalletViewer from './ShowingWallet';
 import Withdrawal from './Withdrawal';
 import WalletTracking from '../BalanceTracking/WalletTracking';
 export default function Home() {
-     const [page,setPage] = useState("wallet-balance");
+     const [page,setPage] = useState("wallet-viewer");
      const handleSwitchPage = (pageName: string) => {
           if(pageName !== page){
                setPage(pageName)
