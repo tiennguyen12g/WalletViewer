@@ -22,7 +22,8 @@ type DateState = {
 const DATE_STORAGE_KEY = "wallet_mnemonic_dates";
 const CHECKBOX_STORAGE_KEY = "wallet_checkbox_status";
 const STORAGE_KEY = "solana_wallet_excel_base64";
-const FILENAME_KEY = "file-name"
+const FILENAME_KEY = "file-name";
+const WALLET_INDEX = "current-wallet-index";
 localStorage.setItem("isUseAlert", "true");
 const WalletViewer: React.FC = () => {
   const [wallets, setWallets] = useState<WalletEntry[]>([]);
@@ -30,7 +31,8 @@ const WalletViewer: React.FC = () => {
   const [isAlert, setIsAlert] = useState(isUseAlert);
   const [dates, setDates] = useState<DateState>({});
   const [fileName, setFileName] = useState<string>("None");
-
+  const [walletIndex, setWalletIndex] = useState<null | number>(0);
+  const [isViewAll, setIsViewFull] = useState<null | "all">(null)
   const [checkboxes, setCheckboxes] = useState<CheckboxState>({});
   // Load from localStorage on first render
   useEffect(() => {
@@ -57,6 +59,11 @@ const WalletViewer: React.FC = () => {
     const fileName = localStorage.getItem(FILENAME_KEY);
     if(fileName){
       setFileName(fileName)
+    }
+
+    const walletIndex = localStorage.getItem(WALLET_INDEX);
+    if(typeof Number(walletIndex)){
+      setWalletIndex(Number(walletIndex))
     }
   }, []);
 
@@ -151,6 +158,24 @@ const WalletViewer: React.FC = () => {
     }
   };
 
+  const handleWalletIndex = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    if(Number(value) !== walletIndex){
+      setWalletIndex(+value);
+      localStorage.setItem(WALLET_INDEX, value)
+    }
+  }
+  const handleViewFullWallet = (e: React.ChangeEvent<HTMLInputElement>) =>{
+    const value = e.target.checked;
+    if (value){
+      setIsViewFull("all");
+      setWalletIndex(null)
+    } else {
+      setIsViewFull(null);
+      const walletIndex = localStorage.getItem(WALLET_INDEX);
+      setWalletIndex(Number(walletIndex));
+    }
+  }
   return (
     <div className="p-4">
       <h3 className="text-xl font-bold mb-4">📄 Solana Wallet Viewer</h3>
@@ -167,6 +192,21 @@ const WalletViewer: React.FC = () => {
         <span>Alert mode: </span>
         <span>{isUseAlert}</span>
       </div>
+      <div >
+        <span>View All: </span>
+        <input type="checkbox" placeholder="View-all" onChange={handleViewFullWallet} value={"all"} style={{width:20, height:20}}/>
+        {/* <input type="number" onChange={handleWalletIndex} /> */}
+        <span> Select Specific:</span>
+        <select style={{marginLeft: 15, height: 26}} onChange={handleWalletIndex} >
+          {Array.from({length: 100}, (_, index: number) => {
+             return (
+              <option key={index} value={index} >
+                wallet {index + 1}
+              </option>
+            );
+          })}
+        </select>
+      </div>
       <div>
         <div className={cx("table-header")}>
           <div>No</div>
@@ -174,7 +214,47 @@ const WalletViewer: React.FC = () => {
           <div>Mnemonic</div>
         </div>
         <div className={cx("table-body")}>
-          {wallets.map((wallet, index) => {
+          {isViewAll === null && wallets.map((wallet, index) => {
+            const bgColor = (index + 1) % 2 === 0 ? "rgb(158, 214, 247)" : "none";
+            return (
+              <React.Fragment key={index}>
+                {walletIndex === index && <div className={cx("table-row")} style={{ backgroundColor: bgColor }}>
+                  <div style={{ fontSize: 24 }}>{wallet.no}</div>
+                  <div>
+                    <div>{ConvertToShortAddress(wallet.publicKey)}</div>
+                    <div onClick={() => handleCopy(wallet.mnemonic)} style={{ cursor: "pointer" }}>
+                      <IoIosCopy size={35} />
+                    </div>
+                    <div>
+                      <span>
+                        Ban:
+                        <input
+                          type="checkbox"
+                          checked={checkboxes[wallet.publicKey]?.ban || false}
+                          onChange={(e) => handleCheckboxChange(wallet.publicKey, "ban", e.target.checked)}
+                        />
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <div>{wallet.mnemonic}</div>
+                    <div>
+                      <input style={{height: 28, fontSize: 17}} type="date" value={dates[wallet.publicKey] || ""} onChange={(e) => handleDateChange(wallet.publicKey, e.target.value)} />
+                    </div>
+                    <span>
+                      Roam:
+                      <input
+                        type="checkbox"
+                        checked={checkboxes[wallet.publicKey]?.done || false}
+                        onChange={(e) => handleCheckboxChange(wallet.publicKey, "done", e.target.checked)}
+                      />
+                    </span>
+                  </div>
+                </div>}
+              </React.Fragment>
+            );
+          })}
+          {isViewAll === "all" && wallets.map((wallet, index) => {
             const bgColor = (index + 1) % 2 === 0 ? "rgb(158, 214, 247)" : "none";
             return (
               <div className={cx("table-row")} key={index} style={{ backgroundColor: bgColor }}>
